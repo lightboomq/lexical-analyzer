@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class='wrapper'>
+        <div class='inputWrapper'>
+            <textarea class='inputCode' placeholder='Исходный код...'></textarea>
+        </div>
+
+        <div class='wrapperTableTokens'>
+            <h3 style='text-align: center;'>Таблица токенов</h3>
+            <div class='tableTokens'>
+                <div class='column token'>Token</div>
+                <div class='column row'>Row</div>
+                <div class='column pow'>Pos</div>
+                <div class='column length' >Length</div>
+            </div>
+        </div>
+
+        <div class='listOfErrors'>
+            Ошибки...
+        </div>
+        <button class='btn'>Получить анализ</button>
+        
+    </div>
+
+    <!-- <script type='module' src='main.js'></script> -->
+    <script type='module' src='Lexer.js'></script>
+</body>
+</html>

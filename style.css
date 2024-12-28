@@ -29,7 +29,7 @@
 .tableTokens{
     display: grid;
     overflow: auto;
-    grid-template-columns: 20% 40% 20% 20%;
+    grid-template-columns: 55% 15% 15% 15%;
 }
 .column{
     text-align: center;

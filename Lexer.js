@@ -1,14 +1,15 @@
 const tableTokens = document.querySelector('.tableTokens');
+const input = document.querySelector('.inputCode');
+const btn = document.querySelector('.btn')
 
 
-const code = `class{
-    let a = 0;
-}
-`
+
+
 
 class Token {
-    constructor( text,  row, pos, length) {
-        this.text = text;
+    constructor( token, name, row, pos, length) {
+        this.token = token;
+        this.name = name
         this.row = row;
         this.pos = pos;
         this.length = length;
@@ -16,19 +17,27 @@ class Token {
 }
 
 
-const tokenTypesList = [
-    {text: 'const' , regex: '^const'},
-    {text: 'let' , regex: '^let'},
-    {text: 'class' , regex: '^class'}
+const typeList = [
+    {token: 'keyword' , regex: `^(break|case|catch|class|const|continue|debugger|default|delete|do|else|export|extends|finally|for|function|if|import|in|instanceof|let|new|return|super|switch|this|throw|try|typeof|var|void|while|width|yield)`},
+                                  
+
+    {token:'literal', regex: '^(\\d{1,}|null|undefined|true|false)'},
+    {token: 'space' , regex: '^[\\s]'},
+    {token: '\n' , regex: '^[\\n]'},
+    {token:'aritmetic-operator', regex: '^(\\+|-|\\*|\\/|%)'},
+    {token:'assignment-operator', regex: '^(=|\\+=|-=|\\*=|\\/=)'},
+    {token:'logical-operator', regex: '^(&&|!|\\|\\|)'},
+    {token:'compare-operator', regex: '^(==|===|!=|<|>|<=|>=)'},
+    {token:'punctuation', regex: '^(,|;|\\(|\\)|\\{|\\}|\\[|\\]|:|\\.)'},
+    {token:'template-literals', regex: '^${'},
+    {token:'ident', regex: '^\\w{1,}'},
 ]
 
-
-
-export default class Lexer {
+class Lexer {
     tokenList = [];
-
+    
     constructor(code, row = 1, pos = 0, length = 0) {
-        this.code = code;
+        this.code = `const let case class`;
         this.row = row
         this.pos = pos
         this.length = length
@@ -38,7 +47,7 @@ export default class Lexer {
         for(let i=0; i<tokenList.length; i++){
             const token = document.createElement('div');
             token.style.textAlign = 'center'
-            token.textContent = tokenList[i].text
+            token.textContent = `${tokenList[i].token}: ${tokenList[i].name}`;
             tableTokens.appendChild(token)
 
             const row = document.createElement('div');
@@ -59,47 +68,52 @@ export default class Lexer {
         return this.tokenList
     }
 
-    lexAnalysis(){
-        while (this.nextToken()) {}
-        this.tokenList = this.tokenList.filter(item => item.text !== '\n'  && item.text !== ' ');
-        return this.render(this.tokenList);
-    }
-
+    
     nextToken(){   
-        if (this.pos >= this.code.length) return
+        if (this.pos >= this.code.length){
+            this.tokenList = this.tokenList.filter(item => item.token !== 'space'  && item.token !== '\n' && item.text !== ' ')
+            return this.render(this.tokenList);
+        } 
 
-        const tokenTypesValues = Object.values(tokenTypesList)
         
-        for (let i = 0; i < tokenTypesValues.length; i++) {      
-            const regex = new RegExp(tokenTypesValues[i].regex);
-            const result = this.code.slice(this.pos).match(regex);          
+        for (let i = 0; i < typeList.length; i++) {      
+            const currentRegex = new RegExp(typeList[i].regex);
+            const currentToken = typeList[i].token
+            const currentStr = this.code.slice(this.pos)
+            
+            const result = currentStr.match(currentRegex); 
+           
+            console.log(currentRegex)
+            console.log(currentStr)
             if(result && result[0]) {
-                const row = result[0] === '\n' ? this.row++ : this.row
-                const length = result[0].length
-                const token = new Token(result[0], row, this.pos, length);
+                
                 this.pos += result[0].length;
+                const name = result[0];
+                const rowToken = currentToken === '\n' ? this.row++ : this.row    
+                
+                const lengthToken = result[0].length
+                const token = new Token(currentToken, name, rowToken, this.pos, lengthToken);
+                
                 this.tokenList.push(token);
                 
-                return true;
+                return this.nextToken();
             }
         }
         throw new Error(`На позиции ${this.pos} обнаружена ошибка`)
     }
 }
 
-
-const lexer = new Lexer(code);
-lexer.lexAnalysis()
-
+const lexer = new Lexer();
+lexer.nextToken()
 
 
-
-
-
-
-
-
-
+btn.addEventListener('click',()=>{
+    const code = input.value;
+    console.log(code)
+    const lexer = new Lexer(`for(lesdgt i = 0 
+)`);
+    lexer.lexAnalysis()
+})
 
 
 
@@ -109,21 +123,7 @@ lexer.lexAnalysis()
 
 
 
-
-
-
-
-
-
-
-// class TokenType {
-//     constructor(name, regex) {
-//         this.name = name;
-//         this.regex = regex;
-//     }
-// }
-
-// const tokenTypesList = {
+// const typeList = {
 //     'NUMBER': new TokenType('NUMBER', '^[0-9]*'),
 //     'CONST': new TokenType('const', '^const'),
 //     'LET': new TokenType('let', '^let'),
@@ -152,12 +152,46 @@ lexer.lexAnalysis()
 
 
 
-console.log = function(message) {
-    if (message.includes('Five Server')) {
-      return; // Игнорируем сообщения, содержащие 'Five Server'
-    }
-    console.log.apply(console, arguments); // Выводим остальные сообщения
-  };
-  console.log("[Five Server] connecting...");  
+
+
+
+
+// class TokenType {
+//     constructor(name, regex) {
+//         this.name = name;
+//         this.regex = regex;
+//     }
+// }
+
+// const typeList = {
+//     'NUMBER': new TokenType('NUMBER', '^[0-9]*'),
+//     'CONST': new TokenType('const', '^const'),
+//     'LET': new TokenType('let', '^let'),
+//     'CYCLE': new TokenType('for', '^for'),
+//     'CLASS': new TokenType('class','^class'),
+//     'FUNCTION': new TokenType('function', '^function'),
+//     '.': new TokenType('.', '^\\.'),
+//     ':': new TokenType(':', '^:'),
+//     'CYCLE': new TokenType('while', '^while'),
+//     'SEMICOLON': new TokenType('SEMICOLON', '^;'),
+//     'SPACE': new TokenType('SPACE', '^[ \\n\\t\\r]'),
+//     'ASSIGN': new TokenType('ASSIGN', '^='),
+//     'LPAR': new TokenType('(', '^\\('),
+//     'RPAR': new TokenType(')', '^\\)'),
+//     'LBRACE': new TokenType('{', '^\\{'),
+//     'RBRACE': new TokenType('}', '^\\}'),
+//     'IDENT': new TokenType('ident', '^[a-z]*'),
+// }
+
+
+
+
+
+
+
+
+
+
+  
   
   

@@ -25,16 +25,25 @@
 .wrapperTableTokens{
     border: 1px solid black;
     padding: 0px 5px 0px 5px;
+    height: 600px;
+    overflow: auto;
 }
 .tableTokens{
     display: grid;
-    overflow: auto;
     grid-template-columns: 55% 15% 15% 15%;
 }
 .column{
     text-align: center;
     border: 1px solid black;
+    border-right: 0px solid black;
     font-weight: 600;
+}
+.row{
+    text-align: center;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    border-bottom: 1px solid black;;
+    font-size: 20px;
 }
 .listOfErrors{
     overflow: auto;

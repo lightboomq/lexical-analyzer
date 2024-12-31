@@ -1,4 +1,4 @@
-const tableTokens = document.querySelector('.tableTokens'); 
+const tableTokens = document.querySelector('ol'); 
 const input = document.querySelector('.inputCode'); 
 const btn = document.querySelector('.btn') 
 
@@ -13,7 +13,7 @@ class Token {
     }
 }
 
-console.log()
+
 const typeList = [ 
     {token: 'new line' , regex: '^[\\n]'},
     {token: 'space' , regex: '^[\\s]'},
@@ -31,7 +31,7 @@ const typeList = [
 
 class Lexer {
     tokenList = []; 
-    
+    countBorder = 0;
     constructor(code, row = 1, pos = 0, length = 0) {
         this.code = code;
         this.row = row
@@ -41,15 +41,19 @@ class Lexer {
 
     render(tokenList){     
         for(let i=0; i<tokenList.length; i++){ 
-            this.createEl(`${tokenList[i].token}: ${tokenList[i].name}`, i)
-            this.createEl(tokenList[i].row, i)
-            this.createEl(tokenList[i].pos, i)
-            this.createEl(tokenList[i].length, i)
+            this.createEl(`${tokenList[i].token}: ${tokenList[i].name}`)
+            this.createEl(tokenList[i].row)
+            this.createEl(tokenList[i].pos)
+            this.createEl(tokenList[i].length)
         }
     }
-    createEl(token, i){       
-        const el = document.createElement('div');
-        if(i % 1=== 0 ) el.style.borderRight = '0px solid black';
+    createEl(token){ 
+        this.countBorder++;      
+        const el = document.createElement('li');
+        if(this.countBorder === 4) {
+            el.style.borderRight = '1px solid black';
+            this.countBorder = 0;
+        }
         el.classList.add('row');
         el.textContent = token;
         tableTokens.appendChild(el);
@@ -70,7 +74,7 @@ class Lexer {
             if(result && result[0]) { 
                 this.pos += result[0].length; 
                 const name = result[0]; 
-                const rowToken = currentToken === 'new-line' ? this.row++ : this.row  
+                const rowToken = currentToken === 'new line' ? this.row++ : this.row  
                 const lengthToken = result[0].length 
                 const token = new Token(currentToken, name, rowToken, this.pos, lengthToken); 
                 
@@ -79,85 +83,16 @@ class Lexer {
                 return this.nextToken(); 
             }
         }
-        throw new Error(`На позиции ${this.pos} обнаружена ошибка`) 
+        throw new Error(`На позиции ${this.pos} обнаружен не существующий токен языка`) 
     }
 }
 
 
 
-btn.addEventListener('click',()=>{ 
+btn.addEventListener('click',()=>{
+    tableTokens.textContent = '';
     const code = input.value; 
     const lexer = new Lexer(code) 
     lexer.nextToken() 
 })
 
-const lexer = new Lexer('for{let i = 0; i<20; i++') 
-lexer.nextToken() 
-
-
-
-
-
-
-// const typeList = {
-//     'NUMBER': new TokenType('NUMBER', '^[0-9]*'),
-//     'CONST': new TokenType('const', '^const'),
-//     'LET': new TokenType('let', '^let'),
-//     'CYCLE': new TokenType('for', '^for'),
-//     'CLASS': new TokenType('class','^class'),
-//     'FUNCTION': new TokenType('function', '^function'),
-//     '.': new TokenType('.', '^\\.'),
-//     ':': new TokenType(':', '^:'),
-//     'CYCLE': new TokenType('while', '^while'),
-//     'SEMICOLON': new TokenType('SEMICOLON', '^;'),
-//     'SPACE': new TokenType('SPACE', '^[ \\n\\t\\r]'),
-//     'ASSIGN': new TokenType('ASSIGN', '^='),
-//     'LPAR': new TokenType('(', '^\\('),
-//     'RPAR': new TokenType(')', '^\\)'),
-//     'LBRACE': new TokenType('{', '^\\{'),
-//     'RBRACE': new TokenType('}', '^\\}'),
-//     'IDENT': new TokenType('ident', '^[a-z]*'),
-// }
-
-
-
-
-// class TokenType {
-//     constructor(name, regex) {
-//         this.name = name;
-//         this.regex = regex;
-//     }
-// }
-
-// const typeList = {
-//     'NUMBER': new TokenType('NUMBER', '^[0-9]*'),
-//     'CONST': new TokenType('const', '^const'),
-//     'LET': new TokenType('let', '^let'),
-//     'CYCLE': new TokenType('for', '^for'),
-//     'CLASS': new TokenType('class','^class'),
-//     'FUNCTION': new TokenType('function', '^function'),
-//     '.': new TokenType('.', '^\\.'),
-//     ':': new TokenType(':', '^:'),
-//     'CYCLE': new TokenType('while', '^while'),
-//     'SEMICOLON': new TokenType('SEMICOLON', '^;'),
-//     'SPACE': new TokenType('SPACE', '^[ \\n\\t\\r]'),
-//     'ASSIGN': new TokenType('ASSIGN', '^='),
-//     'LPAR': new TokenType('(', '^\\('),
-//     'RPAR': new TokenType(')', '^\\)'),
-//     'LBRACE': new TokenType('{', '^\\{'),
-//     'RBRACE': new TokenType('}', '^\\}'),
-//     'IDENT': new TokenType('ident', '^[a-z]*'),
-// }
-
-
-
-
-
-
-
-
-
-
-  
-  
-  

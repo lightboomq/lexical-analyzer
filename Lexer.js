@@ -1,7 +1,7 @@
 const tableTokens = document.querySelector('ol'); 
 const input = document.querySelector('.inputCode'); 
 const btn = document.querySelector('.btn') 
-
+const errors = document.querySelector('.listOfErrors')
 
 class Token { 
     constructor( token, name, row, pos, length) { 
@@ -12,7 +12,6 @@ class Token {
         this.length = length;
     }
 }
-
 
 const typeList = [ 
     {token: 'new line' , regex: '^[\\n]'},
@@ -83,11 +82,10 @@ class Lexer {
                 return this.nextToken(); 
             }
         }
-        throw new Error(`На позиции ${this.pos} обнаружен не существующий токен языка`) 
+        errors.textContent = `На позиции ${this.pos} обнаружен не существующий токен языка`
+        throw new Error(`На позиции ${this.pos} обнаружен не существующий токен языка`)
     }
 }
-
-
 
 btn.addEventListener('click',()=>{
     tableTokens.textContent = '';

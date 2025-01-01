@@ -11,9 +11,10 @@
     margin-top: 10px;
     gap: 15px;
 }
-.inputWrapper{
-    background-color: aqua;
-    height: 600px; 
+.input{
+    height: 600px;
+    border: 1px solid black;
+    padding: 10px; 
 }
 .inputCode{
     width: 100%;
@@ -61,4 +62,7 @@
     height: 30px;
     cursor: pointer;
     grid-column: 2/3;
+}
+.highlight{
+    background-color: rgb(59, 192, 245);
 }

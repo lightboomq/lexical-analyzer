@@ -8,9 +8,8 @@
 </head>
 <body>
     <div class='wrapper'>
-        <div class='inputWrapper'>
-            <textarea class='inputCode' spellcheck="false" placeholder='Исходный код...'></textarea>
-        </div>
+        
+        <div class='input' contenteditable="true"></div>
 
         <div class='wrapperTableTokens'>
             <h3 style='text-align: center;'>Таблица токенов</h3>
@@ -27,11 +26,11 @@
         <div class='listOfErrors'>
             Ошибки...
         </div>
-        
+
         <button class='btn'>Получить анализ</button>
     </div>
 
     
-    <script type='module' src='Lexer.js'></script>
+    <script src='Lexer.js'></script>
 </body>
 </html>

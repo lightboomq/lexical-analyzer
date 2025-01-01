@@ -1,5 +1,5 @@
 const tableTokens = document.querySelector('ol'); 
-const input = document.querySelector('.inputCode'); 
+const input = document.querySelector('.input'); 
 const btn = document.querySelector('.btn') 
 const errors = document.querySelector('.listOfErrors')
 
@@ -40,27 +40,39 @@ class Lexer {
 
     render(tokenList){     
         for(let i=0; i<tokenList.length; i++){ 
-            this.createEl(`${tokenList[i].token}: ${tokenList[i].name}`)
+            this.createEl(`${tokenList[i].token}: `,  `${tokenList[i].name}`,tokenList[i].pos)
             this.createEl(tokenList[i].row)
             this.createEl(tokenList[i].pos)
             this.createEl(tokenList[i].length)
         }
     }
-    createEl(token){ 
-        this.countBorder++;      
-        const el = document.createElement('li');
+    createEl(token,tokenName,pos){ 
+          
+        const li = document.createElement('li');
+        li.classList.add('row');
+        this.countBorder++;
         if(this.countBorder === 4) {
-            el.style.borderRight = '1px solid black';
+            li.style.borderRight = '1px solid black';
             this.countBorder = 0;
+        }    
+        if(tokenName){
+            const span = document.createElement('span');
+            li.setAttribute('pos', pos)
+            span.textContent = tokenName
+            li.textContent = token;
+            li.appendChild(span);
         }
-        el.classList.add('row');
-        el.textContent = token;
-        tableTokens.appendChild(el);
+        else{
+            li.textContent = token;
+        }
+     
+        tableTokens.appendChild(li);
     }
     
     nextToken(){  
         if (this.pos >= this.code.length){ 
             this.tokenList = this.tokenList.filter(item => item.token !== 'space' && item.token !== 'new line' && item.text !== ' ') 
+            
             return this.render(this.tokenList); 
         } 
 
@@ -70,7 +82,7 @@ class Lexer {
             const currentStr = this.code.slice(this.pos)  
             const result = currentStr.match(currentRegex); 
             
-            if(result && result[0]) { 
+            if(result !== null) { 
                 this.pos += result[0].length; 
                 const name = result[0]; 
                 const rowToken = currentToken === 'new line' ? this.row++ : this.row  
@@ -89,8 +101,44 @@ class Lexer {
 
 btn.addEventListener('click',()=>{
     tableTokens.textContent = '';
-    const code = input.value; 
+    const code = input.textContent; 
+    console.log(code)
     const lexer = new Lexer(code) 
     lexer.nextToken() 
 })
+
+
+// const lexer = new Lexer(`for(i=0;i++) for(j=1;j--)`)
+
+// lexer.nextToken()
+
+tableTokens.addEventListener('click', (e)=>{
+    const li = e.target;
+    if(li.tagName !== 'LI') return;
+    console.log(li)
+    const span = li.querySelector('span');
+    const selectedToken = span.textContent;
+    const posToken = Number(span.getAttribute('pos'));
+
+    const code = input.textContent
+    
+    highlightToken(code,selectedToken,posToken);
+})
+
+
+function highlightToken(code,selectedToken,posToken) {
+    const span = `<span class='highlight'>${selectedToken}</span>`;
+    const updateInput = code.slice(0, posToken-selectedToken.length) + span + code.slice(posToken,)                    
+    input.innerHTML = updateInput
+}
+
+
+
+
+
+
+
+
+
+
 

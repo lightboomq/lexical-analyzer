@@ -17,12 +17,12 @@ const typeList = [
     {token: 'new line' , regex: '^[\\n]'},
     {token: 'space' , regex: '^[\\s]'},
     {token: 'keyword' , regex: `^(map|filter|break|case|catch|class|constructor|const|continue|debugger|default|delete|do|else|export|extends|finally|for
-                                 |function|if|import|in|instanceof|let|new|return|super|switch|this|throw|try|typeof|var|void|for|while|width|yield)`},
+                                 |function|if|import|in|instanceof|let|new|return|super|switch|this|throw|try|typeof|var|void|for|while|width|yield|console|log)`},
     {token:'literal', regex: '^(\\d{1,}|null|undefined|true|false)'},
     {token:'aritmetic operator', regex: '^(\\+|-|\\*|\\/|%)'},
     {token:'assignment operator', regex: '^(=|\\+=|-=|\\*=|\\/=)'},
     {token:'logical operator', regex: '^(&&|!|\\|\\|)'},
-    {token:'compare operator', regex: '^(==|===|!=|<|>|<=|>=)'},
+    {token:'compare operator', regex: '^(==|===|!=|<|>|<=|>=)'}, //не срабатывает регулярка на <|>|<=|>=
     {token:'punctuation', regex: '^(,|;|\\(|\\)|\\{|\\}|\\[|\\]|:|\\.)'},
     {token:'template literals', regex: '^${'},
     {token:'ident', regex: '^\\w{1,}'},
@@ -38,16 +38,25 @@ class Lexer {
         this.length = length
     }
 
+    syntaxErrors(){
+        // try{
+        //     const res = eval(this.code);
+        //     console.log(res)
+        // }catch(err){
+        //     errors.textContent = err
+        // }
+    }
+
     render(tokenList){     
         for(let i=0; i<tokenList.length; i++){ 
-            this.createEl(`${tokenList[i].token}: `,  `${tokenList[i].name}`,tokenList[i].pos)
+            this.createEl(`${tokenList[i].token}: `, `${tokenList[i].name}`,tokenList[i].pos)
             this.createEl(tokenList[i].row)
             this.createEl(tokenList[i].pos)
             this.createEl(tokenList[i].length)
         }
     }
-    createEl(token,tokenName,pos){ 
-          
+
+    createEl(token,tokenName,pos){        
         const li = document.createElement('li');
         li.classList.add('row');
         this.countBorder++;
@@ -56,11 +65,13 @@ class Lexer {
             this.countBorder = 0;
         }    
         if(tokenName){
-            const span = document.createElement('span');
-            li.setAttribute('pos', pos)
-            span.textContent = tokenName
-            li.textContent = token;
-            li.appendChild(span);
+            const spanTokenName = document.createElement('span');
+            spanTokenName.classList.add('spanTokenName')
+            spanTokenName.setAttribute('pos', pos)
+            spanTokenName.textContent = tokenName
+
+            li.textContent = token
+            li.appendChild(spanTokenName)            
         }
         else{
             li.textContent = token;
@@ -72,12 +83,11 @@ class Lexer {
     nextToken(){  
         if (this.pos >= this.code.length){ 
             this.tokenList = this.tokenList.filter(item => item.token !== 'space' && item.token !== 'new line' && item.text !== ' ') 
-            
             return this.render(this.tokenList); 
         } 
 
         for (let i = 0; i < typeList.length; i++) {   
-            const currentRegex = new RegExp(typeList[i].regex); 
+            const currentRegex = new RegExp(typeList[i].regex);
             const currentToken = typeList[i].token 
             const currentStr = this.code.slice(this.pos)  
             const result = currentStr.match(currentRegex); 
@@ -101,41 +111,35 @@ class Lexer {
 
 btn.addEventListener('click',()=>{
     tableTokens.textContent = '';
-    const code = input.textContent; 
-    console.log(code)
-    const lexer = new Lexer(code) 
+    let code = input.innerHTML; 
+    code = code.replace(/<div>/g, '\n').replace(/<\/div>/g, '');
+    const lexer = new Lexer(code)
+    lexer.syntaxErrors() 
     lexer.nextToken() 
 })
 
 
-// const lexer = new Lexer(`for(i=0;i++) for(j=1;j--)`)
-
-// lexer.nextToken()
-
 tableTokens.addEventListener('click', (e)=>{
-    const li = e.target;
-    if(li.tagName !== 'LI') return;
-    console.log(li)
-    const span = li.querySelector('span');
-    const selectedToken = span.textContent;
-    const posToken = Number(span.getAttribute('pos'));
+    if(e.target.tagName !== 'SPAN') return
 
-    const code = input.textContent
-    
+    const spanTokenName = e.target;
+    const selectedToken = spanTokenName.textContent;
+    const posToken = Number(spanTokenName.getAttribute('pos'));
+
+    let code = input.innerHTML
+    code = code.replace(/<div>/g, '\n').replace(/<\/div>/g, '');
+    code = code.replace(/<span[^>]*>/g, '').replace(/<\/span>/g, '');
+     
     highlightToken(code,selectedToken,posToken);
 })
 
 
 function highlightToken(code,selectedToken,posToken) {
     const span = `<span class='highlight'>${selectedToken}</span>`;
-    const updateInput = code.slice(0, posToken-selectedToken.length) + span + code.slice(posToken,)                    
-    input.innerHTML = updateInput
+    const updateInput = code.slice(0, posToken-selectedToken.length) + span + code.slice(posToken,);  
+                     
+    input.innerHTML = updateInput;
 }
-
-
-
-
-
 
 
 

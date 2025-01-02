@@ -15,6 +15,8 @@
     height: 600px;
     border: 1px solid black;
     padding: 10px; 
+    white-space: pre-wrap;
+    font-size: 20px;
 }
 .inputCode{
     width: 100%;
@@ -65,4 +67,7 @@
 }
 .highlight{
     background-color: rgb(59, 192, 245);
+}
+.spanTokenName{
+    cursor: pointer;
 }

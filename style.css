@@ -18,13 +18,7 @@
     white-space: pre-wrap;
     font-size: 20px;
 }
-.inputCode{
-    width: 100%;
-    height: 100%;
-    resize: none;
-    padding-left: 10px;
-    padding-top: 10px;
-}
+
 .wrapperTableTokens{
     border: 1px solid black;
     padding: 0px 5px 0px 5px;
@@ -53,8 +47,9 @@
     grid-column: 1/3;
     padding-left: 10px;
     padding-top: 10px;
-    height: 200px;
+    height: 80px;
     border: 1px solid black;
+    color: red;
 }
 .btn{
     display: flex;
